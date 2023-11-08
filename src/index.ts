@@ -144,6 +144,10 @@ async function runAction(inputs: Inputs) {
       break;
       // eslint-disable-next-line
     } catch (error: any) {
+     warning(`Caught an error in runAction`);  
+      for (let property in error) {  
+        warning(`${property}: ${error[property]}`);  
+      }  
       if (attempt === inputs.max_attempts) {
         throw new Error(`Final attempt failed. ${error.message}`);
       } else if (!done && inputs.retry_on === 'error') {
