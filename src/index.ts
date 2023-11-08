@@ -68,6 +68,7 @@ async function runRetryCmd(inputs: Inputs): Promise<void> {
 }
 
 async function runCmd(attempt: number, inputs: Inputs) {
+  warning(`akcommunity master `);
   const end_time = Date.now() + getTimeout(inputs);
   const executable = getExecutable(inputs);
 
