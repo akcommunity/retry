@@ -1076,7 +1076,7 @@ function runCmd(attempt, inputs) {
 }
 function runAction(inputs) {
     return __awaiter(this, void 0, void 0, function () {
-        var attempt, error_2;
+        var attempt, error_2, property;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, (0, inputs_1.validateInputs)(inputs)];
@@ -1098,6 +1098,10 @@ function runAction(inputs) {
                     return [3 /*break*/, 13];
                 case 5:
                     error_2 = _a.sent();
+                    (0, core_1.warning)("Caught an error in runAction");
+                    for (property in error_2) {
+                        (0, core_1.warning)("".concat(property, ": ").concat(error_2[property]));
+                    }
                     if (!(attempt === inputs.max_attempts)) return [3 /*break*/, 6];
                     throw new Error("Final attempt failed. ".concat(error_2.message));
                 case 6:
