@@ -14,8 +14,8 @@ const OUTPUT_EXIT_ERROR_KEY = 'exit_error';
 let exit: number;
 let done: boolean;
 let launchCommandOnError: boolean;
-const commandOnError = inputs.command_on_error;
-const trigger_error_text = inputs.trigger_error_text;
+let commandOnError;
+let trigger_error_text;
 
 function getExecutable(inputs: Inputs): string {
   if (!inputs.shell) {
@@ -148,7 +148,15 @@ async function runCmd(attempt: number, inputs: Inputs) {
 
 async function runAction(inputs: Inputs) {
   await validateInputs(inputs);
-
+ commandOnError = inputs.command_on_error;  
+  trigger_error_text = inputs.trigger_error_text;
+  
+async function runAction(inputs: Inputs) {  
+  await validateInputs(inputs);  
+  
+  // Define commandOnError and trigger_error_text here  
+  commandOnError = inputs.command_on_error;  
+  trigger_error_text = inputs.trigger_error_text;  
   for (let attempt = 1; attempt <= inputs.max_attempts; attempt++) {
     try {
       // just keep overwriting attempts output
