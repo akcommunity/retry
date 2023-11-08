@@ -79,13 +79,13 @@ async function runCmd(attempt: number, inputs: Inputs) {
   exit = 0;
   done = false;
   let timeout = false;
-  launchCommandOnError = false;
+  
 
   
 
    debug(`Running command ${inputs.command} on ${OS} using shell ${executable}`);
   let child;  
-  if (launchCommandOnError && commandOnError) {  
+  if (attempt > 1 && launchCommandOnError ) {  
     console.log(`Error occurred in previous attempt, running command_on_error: ${commandOnError}`);  
     child = spawn(commandOnError, { shell: executable });  
   } else if (attempt > 1 && inputs.new_command_on_retry) {  
@@ -102,7 +102,7 @@ async function runCmd(attempt: number, inputs: Inputs) {
   });
   child.stderr?.on('data', (data) => {
     if (data.includes(trigger_error_text)) {  
-      info('an error trigger was found matching the text');
+      warning('an error trigger was found matching the text');
       launchCommandOnError = true;
     }
     process.stdout.write(data);
@@ -154,6 +154,7 @@ async function runAction(inputs: Inputs) {
   // Define commandOnError and trigger_error_text here  
   commandOnError = inputs.command_on_error;  
   trigger_error_text = inputs.trigger_error_text;  
+  launchCommandOnError = false;
   for (let attempt = 1; attempt <= inputs.max_attempts; attempt++) {
     try {
       // just keep overwriting attempts output
