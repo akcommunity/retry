@@ -1139,6 +1139,7 @@ runAction(inputs)
     .catch(function (err) {
     // exact error code if available, otherwise just 1
     var exitCode = exit > 0 ? exit : 1;
+    (0, core_1.warning)('Error occured in RunAction: ' + err.message);
     if (inputs.continue_on_error) {
         (0, core_1.warning)(err.message);
     }
