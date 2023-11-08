@@ -1,8 +1,9 @@
 # retry
 
+A fork from retry action of nick retry but with Node20 support
+
 Retries an Action step on failure or timeout. This is currently intended to replace the `run` step for moody commands.
 
-**NOTE:** Ownership of this project was transferred to my personal account `nick-fields` from my work account `nick-invision`. Details [here](#Ownership)
 
 ---
 
