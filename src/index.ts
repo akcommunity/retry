@@ -88,9 +88,15 @@ async function runCmd(attempt: number, inputs: Inputs) {
   }
 
   child.stdout?.on('data', (data) => {
+    if (data.includes('Found remote_state settings')) {  
+      warning('detected a remote_state error in stdout');
+    }
     process.stdout.write(data);
   });
   child.stderr?.on('data', (data) => {
+     if (data.includes('Found remote_state settings')) {  
+      warning('detected a remote_state error in stderr');
+    }
     process.stdout.write(data);
   });
 
