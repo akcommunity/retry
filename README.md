@@ -25,6 +25,10 @@ Retries an Action step on failure or timeout. This is currently intended to repl
 
 **Required** The command to run
 
+### `command2`
+
+**Required** The command2 to run after failure of first one
+
 ### `retry_wait_seconds`
 
 **Optional** Number of seconds to wait before attempting the next retry. Defaults to `10`
