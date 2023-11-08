@@ -176,7 +176,7 @@ runAction(inputs)
   .catch((err) => {
     // exact error code if available, otherwise just 1
     const exitCode = exit > 0 ? exit : 1;
-
+    warning('Error occured in RunAction: '+ err.message);
     if (inputs.continue_on_error) {
       warning(err.message);
     } else {
