@@ -24,9 +24,11 @@ jobs:
       - name: Build
         run: npm run prepare
       - name: Commit and Push Changes
-        run: |
+        run: | 
+          git config user.email "you@example.com"
+          git config user.name "Your Name"
           git add dist/
-          git commit -m "Add generated files"
+          git commit -m "Update generated files"
           git push
       - name: Run Unit Tests
         run: npm test
