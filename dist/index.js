@@ -1019,9 +1019,8 @@ function runCmd(attempt, inputs) {
                     exit = 0;
                     done = false;
                     timeout = false;
-                    launchCommandOnError = false;
                     (0, core_1.debug)("Running command ".concat(inputs.command, " on ").concat(OS, " using shell ").concat(executable));
-                    if (launchCommandOnError && commandOnError) {
+                    if (attempt > 1 && launchCommandOnError) {
                         console.log("Error occurred in previous attempt, running command_on_error: ".concat(commandOnError));
                         child = (0, child_process_1.spawn)(commandOnError, { shell: executable });
                     }
@@ -1038,7 +1037,7 @@ function runCmd(attempt, inputs) {
                     });
                     (_b = child.stderr) === null || _b === void 0 ? void 0 : _b.on('data', function (data) {
                         if (data.includes(trigger_error_text)) {
-                            (0, core_1.info)('an error trigger was found matching the text');
+                            (0, core_1.warning)('an error trigger was found matching the text');
                             launchCommandOnError = true;
                         }
                         process.stdout.write(data);
@@ -1097,6 +1096,7 @@ function runAction(inputs) {
                     // Define commandOnError and trigger_error_text here  
                     commandOnError = inputs.command_on_error;
                     trigger_error_text = inputs.trigger_error_text;
+                    launchCommandOnError = false;
                     attempt = 1;
                     _a.label = 2;
                 case 2:
