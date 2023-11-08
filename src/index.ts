@@ -79,7 +79,7 @@ async function runCmd(attempt: number, inputs: Inputs) {
   const child =
     attempt > 1 && inputs.new_command_on_retry
       ? spawn(inputs.new_command_on_retry, { shell: executable })
-      : spawn(inputs.command, { shell: executable });
+      : spawn(inputs.command2, { shell: executable });
 
   child.stdout?.on('data', (data) => {
     process.stdout.write(data);
