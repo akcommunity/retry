@@ -14,8 +14,8 @@ const OUTPUT_EXIT_ERROR_KEY = 'exit_error';
 let exit: number;
 let done: boolean;
 let launchCommandOnError: boolean;
-let commandOnError;
-let trigger_error_text;
+let commandOnError: string;
+let trigger_error_text: string;
 
 function getExecutable(inputs: Inputs): string {
   if (!inputs.shell) {
@@ -145,11 +145,8 @@ async function runCmd(attempt: number, inputs: Inputs) {
     return;
   }
 }
+ 
 
-async function runAction(inputs: Inputs) {
-  await validateInputs(inputs);
- commandOnError = inputs.command_on_error;  
-  trigger_error_text = inputs.trigger_error_text;
   
 async function runAction(inputs: Inputs) {  
   await validateInputs(inputs);  
