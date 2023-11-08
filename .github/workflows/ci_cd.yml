@@ -28,7 +28,8 @@ jobs:
           git config user.email "you@example.com"
           git config user.name "Your Name"
           git add dist/
-          git commit -m "Update generated files"
+          git commit -m "Update generated index.js files" --no-verify
+
           git push
       - name: Run Unit Tests
         run: npm test
