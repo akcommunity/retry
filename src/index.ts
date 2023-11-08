@@ -14,6 +14,8 @@ const OUTPUT_EXIT_ERROR_KEY = 'exit_error';
 let exit: number;
 let done: boolean;
 let launchCommandOnError: boolean;
+const commandOnError = inputs.command_on_error;
+const trigger_error_text = inputs.trigger_error_text;
 
 function getExecutable(inputs: Inputs): string {
   if (!inputs.shell) {
@@ -22,8 +24,7 @@ function getExecutable(inputs: Inputs): string {
 
   let executable: string;
   const shellName = inputs.shell.split(' ')[0];
-  const commandOnError = inputs.command_on_error;
-  const trigger_error_text = inputs.trigger_error_text;
+  
 
   switch (shellName) {
     case 'bash':
