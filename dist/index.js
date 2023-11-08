@@ -943,6 +943,9 @@ var OUTPUT_EXIT_CODE_KEY = 'exit_code';
 var OUTPUT_EXIT_ERROR_KEY = 'exit_error';
 var exit;
 var done;
+var launchCommandOnError;
+var commandOnError;
+var trigger_error_text;
 function getExecutable(inputs) {
     if (!inputs.shell) {
         return OS === 'win32' ? 'powershell' : 'bash';
@@ -1010,30 +1013,33 @@ function runCmd(attempt, inputs) {
         return __generator(this, function (_c) {
             switch (_c.label) {
                 case 0:
-                    (0, core_1.warning)("akcommunity master ");
+                    (0, core_1.info)("akcommunity version ");
                     end_time = Date.now() + (0, inputs_1.getTimeout)(inputs);
                     executable = getExecutable(inputs);
                     exit = 0;
                     done = false;
                     timeout = false;
+                    launchCommandOnError = false;
                     (0, core_1.debug)("Running command ".concat(inputs.command, " on ").concat(OS, " using shell ").concat(executable));
-                    if (attempt === 1) {
-                        console.log("Attempt 1: Running command: ".concat(inputs.command));
-                        child = (0, child_process_1.spawn)(inputs.command, { shell: executable });
+                    if (launchCommandOnError && commandOnError) {
+                        console.log("Error occurred in previous attempt, running command_on_error: ".concat(commandOnError));
+                        child = (0, child_process_1.spawn)(commandOnError, { shell: executable });
+                    }
+                    else if (attempt > 1 && inputs.new_command_on_retry) {
+                        console.log("Attempt ".concat(attempt, ": Running new_command_on_retry: ").concat(inputs.new_command_on_retry));
+                        child = (0, child_process_1.spawn)(inputs.new_command_on_retry, { shell: executable });
                     }
                     else {
-                        console.log("Attempt ".concat(attempt, ": Running command2: ").concat(inputs.command2));
-                        child = (0, child_process_1.spawn)(inputs.command2, { shell: executable });
+                        console.log("Attempt ".concat(attempt, ": Running command: ").concat(inputs.command));
+                        child = (0, child_process_1.spawn)(inputs.command, { shell: executable });
                     }
                     (_a = child.stdout) === null || _a === void 0 ? void 0 : _a.on('data', function (data) {
-                        if (data.includes('Found remote_state settings')) {
-                            (0, core_1.warning)('detected a remote_state error in stdout');
-                        }
                         process.stdout.write(data);
                     });
                     (_b = child.stderr) === null || _b === void 0 ? void 0 : _b.on('data', function (data) {
-                        if (data.includes('Found remote_state settings')) {
-                            (0, core_1.warning)('detected a remote_state error in stderr');
+                        if (data.includes(trigger_error_text)) {
+                            (0, core_1.info)('an error trigger was found matching the text');
+                            launchCommandOnError = true;
                         }
                         process.stdout.write(data);
                     });
@@ -1088,6 +1094,9 @@ function runAction(inputs) {
                 case 0: return [4 /*yield*/, (0, inputs_1.validateInputs)(inputs)];
                 case 1:
                     _a.sent();
+                    // Define commandOnError and trigger_error_text here  
+                    commandOnError = inputs.command_on_error;
+                    trigger_error_text = inputs.trigger_error_text;
                     attempt = 1;
                     _a.label = 2;
                 case 2:
@@ -2946,7 +2955,9 @@ function getInputs() {
     var timeout_seconds = getInputNumber('timeout_seconds', false);
     var max_attempts = getInputNumber('max_attempts', true) || 3;
     var command = (0, core_1.getInput)('command', { required: true });
-    var command2 = (0, core_1.getInput)('command2', { required: true });
+    var command2 = (0, core_1.getInput)('command2', { required: false });
+    var command_on_error = (0, core_1.getInput)('command_on_error', { required: true });
+    var trigger_error_text = (0, core_1.getInput)('trigger_error_text', { required: true });
     var retry_wait_seconds = getInputNumber('retry_wait_seconds', false) || 10;
     var shell = (0, core_1.getInput)('shell');
     var polling_interval_seconds = getInputNumber('polling_interval_seconds', false) || 1;
@@ -2962,6 +2973,8 @@ function getInputs() {
         max_attempts: max_attempts,
         command: command,
         command2: command2,
+        command_on_error: command_on_error,
+        trigger_error_text: trigger_error_text,
         retry_wait_seconds: retry_wait_seconds,
         shell: shell,
         polling_interval_seconds: polling_interval_seconds,
