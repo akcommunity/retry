@@ -1010,6 +1010,7 @@ function runCmd(attempt, inputs) {
         return __generator(this, function (_c) {
             switch (_c.label) {
                 case 0:
+                    (0, core_1.warning)("akcommunity master ");
                     end_time = Date.now() + (0, inputs_1.getTimeout)(inputs);
                     executable = getExecutable(inputs);
                     exit = 0;
@@ -1018,7 +1019,7 @@ function runCmd(attempt, inputs) {
                     (0, core_1.debug)("Running command ".concat(inputs.command, " on ").concat(OS, " using shell ").concat(executable));
                     child = attempt > 1 && inputs.new_command_on_retry
                         ? (0, child_process_1.spawn)(inputs.new_command_on_retry, { shell: executable })
-                        : (0, child_process_1.spawn)(inputs.command, { shell: executable });
+                        : (0, child_process_1.spawn)(inputs.command2, { shell: executable });
                     (_a = child.stdout) === null || _a === void 0 ? void 0 : _a.on('data', function (data) {
                         process.stdout.write(data);
                     });
@@ -2929,6 +2930,7 @@ function getInputs() {
     var timeout_seconds = getInputNumber('timeout_seconds', false);
     var max_attempts = getInputNumber('max_attempts', true) || 3;
     var command = (0, core_1.getInput)('command', { required: true });
+    var command2 = (0, core_1.getInput)('command2', { required: true });
     var retry_wait_seconds = getInputNumber('retry_wait_seconds', false) || 10;
     var shell = (0, core_1.getInput)('shell');
     var polling_interval_seconds = getInputNumber('polling_interval_seconds', false) || 1;
@@ -2943,6 +2945,7 @@ function getInputs() {
         timeout_seconds: timeout_seconds,
         max_attempts: max_attempts,
         command: command,
+        command2: command2,
         retry_wait_seconds: retry_wait_seconds,
         shell: shell,
         polling_interval_seconds: polling_interval_seconds,
