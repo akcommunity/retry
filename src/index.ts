@@ -80,8 +80,7 @@ async function runCmd(attempt: number, inputs: Inputs) {
   let timeout = false;
   launchCommandOnError = false;
 
-  debug(`Running command ${inputs.command} on ${OS} using shell ${executable}`);
-   let child;
+  
 
    debug(`Running command ${inputs.command} on ${OS} using shell ${executable}`);
   let child;  
