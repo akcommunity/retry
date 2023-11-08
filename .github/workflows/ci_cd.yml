@@ -1,6 +1,6 @@
 name: CI/CD
+
 on:
-  # only on PRs into and merge to default branch
   pull_request:
     branches:
       - master
@@ -10,25 +10,33 @@ on:
 
 jobs:
   ci_unit:
-      name: Run Unit Tests
-      runs-on: ubuntu-latest
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v2
-        - name: Setup Node.js
-          uses: actions/setup-node@v1
-          with:
-            node-version: 16
-        - name: Install dependencies
-          run: npm ci
-        - name: Run Unit Tests
-          run: npm test
-        - uses: codecov/codecov-action@v3
-          with:
-            directory: ./coverage/
-            verbose: true
+    name: Run Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16
+      - name: Install dependencies
+        run: npm ci
+      - name: Build
+        run: npm run prepare
+      - name: Commit and Push Changes
+        run: |
+          git add dist/
+          git commit -m "Add generated files"
+          git push
+      - name: Run Unit Tests
+        run: npm test
+      - uses: codecov/codecov-action@v3
+        with:
+          directory: ./coverage/
+          verbose: true
+
   cd:
-    name: Publish Action    
+    name: Publish Action
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
