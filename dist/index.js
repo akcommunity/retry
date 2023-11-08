@@ -1026,9 +1026,15 @@ function runCmd(attempt, inputs) {
                         child = (0, child_process_1.spawn)(inputs.command2, { shell: executable });
                     }
                     (_a = child.stdout) === null || _a === void 0 ? void 0 : _a.on('data', function (data) {
+                        if (data.includes('Found remote_state settings')) {
+                            (0, core_1.warning)('detected a remote_state error in stdout');
+                        }
                         process.stdout.write(data);
                     });
                     (_b = child.stderr) === null || _b === void 0 ? void 0 : _b.on('data', function (data) {
+                        if (data.includes('Found remote_state settings')) {
+                            (0, core_1.warning)('detected a remote_state error in stderr');
+                        }
                         process.stdout.write(data);
                     });
                     child.on('exit', function (code, signal) {
