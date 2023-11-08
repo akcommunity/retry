@@ -77,10 +77,15 @@ async function runCmd(attempt: number, inputs: Inputs) {
   let timeout = false;
 
   debug(`Running command ${inputs.command} on ${OS} using shell ${executable}`);
-  const child =
-    attempt > 1 && inputs.new_command_on_retry
-      ? spawn(inputs.new_command_on_retry, { shell: executable })
-      : spawn(inputs.command2, { shell: executable });
+   let child;
+
+  if (attempt === 1) {
+    console.log(`Attempt 1: Running command: ${inputs.command}`);
+    child = spawn(inputs.command, { shell: executable });
+  } else {
+    console.log(`Attempt ${attempt}: Running command2: ${inputs.command2}`);
+    child = spawn(inputs.command2, { shell: executable });
+  }
 
   child.stdout?.on('data', (data) => {
     process.stdout.write(data);
