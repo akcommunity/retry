@@ -25,9 +25,13 @@ Retries an Action step on failure or timeout. This is currently intended to repl
 
 **Required** The command to run
 
-### `command2`
+### `trigger_error_text `
 
-**Required** The command2 to run after failure of first one
+**Required** Error message triggering a command_on_error command
+
+### `command_on_error  `
+
+**Required** a command that will execute if an error is triggered matching the error text
 
 ### `retry_wait_seconds`
 
