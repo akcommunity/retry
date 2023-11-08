@@ -13,6 +13,7 @@ const OUTPUT_EXIT_ERROR_KEY = 'exit_error';
 
 let exit: number;
 let done: boolean;
+let launchCommandOnError: boolean;
 
 function getExecutable(inputs: Inputs): string {
   if (!inputs.shell) {
@@ -21,6 +22,8 @@ function getExecutable(inputs: Inputs): string {
 
   let executable: string;
   const shellName = inputs.shell.split(' ')[0];
+  const commandOnError = inputs.command_on_error;
+  const trigger_error_text = inputs.trigger_error_text;
 
   switch (shellName) {
     case 'bash':
@@ -68,34 +71,39 @@ async function runRetryCmd(inputs: Inputs): Promise<void> {
 }
 
 async function runCmd(attempt: number, inputs: Inputs) {
-  warning(`akcommunity master `);
+  info(`akcommunity version `);
   const end_time = Date.now() + getTimeout(inputs);
   const executable = getExecutable(inputs);
 
   exit = 0;
   done = false;
   let timeout = false;
+  launchCommandOnError = false;
 
   debug(`Running command ${inputs.command} on ${OS} using shell ${executable}`);
    let child;
 
-  if (attempt === 1) {
-    console.log(`Attempt 1: Running command: ${inputs.command}`);
-    child = spawn(inputs.command, { shell: executable });
-  } else {
-    console.log(`Attempt ${attempt}: Running command2: ${inputs.command2}`);
-    child = spawn(inputs.command2, { shell: executable });
-  }
+   debug(`Running command ${inputs.command} on ${OS} using shell ${executable}`);
+  let child;  
+  if (launchCommandOnError && commandOnError) {  
+    console.log(`Error occurred in previous attempt, running command_on_error: ${commandOnError}`);  
+    child = spawn(commandOnError, { shell: executable });  
+  } else if (attempt > 1 && inputs.new_command_on_retry) {  
+    console.log(`Attempt ${attempt}: Running new_command_on_retry: ${inputs.new_command_on_retry}`);  
+    child = spawn(inputs.new_command_on_retry, { shell: executable });  
+  } else {  
+    console.log(`Attempt ${attempt}: Running command: ${inputs.command}`);  
+    child = spawn(inputs.command, { shell: executable });  
+  }  
 
   child.stdout?.on('data', (data) => {
-    if (data.includes('Found remote_state settings')) {  
-      warning('detected a remote_state error in stdout');
-    }
+    
     process.stdout.write(data);
   });
   child.stderr?.on('data', (data) => {
-     if (data.includes('Found remote_state settings')) {  
-      warning('detected a remote_state error in stderr');
+    if (data.includes(trigger_error_text)) {  
+      info('an error trigger was found matching the text');
+      launchCommandOnError = true;
     }
     process.stdout.write(data);
   });
