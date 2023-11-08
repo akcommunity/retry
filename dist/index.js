@@ -1017,9 +1017,14 @@ function runCmd(attempt, inputs) {
                     done = false;
                     timeout = false;
                     (0, core_1.debug)("Running command ".concat(inputs.command, " on ").concat(OS, " using shell ").concat(executable));
-                    child = attempt > 1 && inputs.new_command_on_retry
-                        ? (0, child_process_1.spawn)(inputs.new_command_on_retry, { shell: executable })
-                        : (0, child_process_1.spawn)(inputs.command2, { shell: executable });
+                    if (attempt === 1) {
+                        console.log("Attempt 1: Running command: ".concat(inputs.command));
+                        child = (0, child_process_1.spawn)(inputs.command, { shell: executable });
+                    }
+                    else {
+                        console.log("Attempt ".concat(attempt, ": Running command2: ").concat(inputs.command2));
+                        child = (0, child_process_1.spawn)(inputs.command2, { shell: executable });
+                    }
                     (_a = child.stdout) === null || _a === void 0 ? void 0 : _a.on('data', function (data) {
                         process.stdout.write(data);
                     });
